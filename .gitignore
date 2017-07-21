@@ -3,24 +3,6 @@ target/
 *swp
 
 
-# Eclipse
-*.pydevproject
-.metadata
-.gradle
-bin/
-tmp/
-*.tmp
-*.bak
-*.swp
-*~.nib
-local.properties
-.settings/
-.loadpath
-.classpath
-
-# Eclipse Core
-.project
-
 
 #java
 *.class
