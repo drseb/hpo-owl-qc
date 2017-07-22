@@ -2,6 +2,7 @@ package phenomics;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
@@ -11,35 +12,45 @@ import java.util.regex.Pattern;
 
 public class PerformHpoOwlQC {
 
-	static final Pattern p = Pattern.compile("SubClassOf\\(<(.+)> <(.+)>\\)");
-	static final Pattern p2 = Pattern.compile("^http://purl.obolibrary.org/obo/(.+)_.+$");
+	private static final Pattern subclassOfPattern = Pattern.compile("SubClassOf\\(<(.+)> <(.+)>\\)");
+	private static final Pattern purlPattern = Pattern.compile("^http://purl.obolibrary.org/obo/(.+)_.+$");
+	private static final Pattern labelLayPattern = Pattern.compile("rdfs:label.*HP_.*layperson");
 
+	/**
+	 * @param hp
+	 *            hp-edit.owl
+	 * @throws IOException
+	 */
 	public static void main(String[] args) throws IOException {
 
 		System.out.println("Test: PerformHpoOwlQC");
 
-		File f = new File("src/main/resources/subclass_whitelist.txt");
-		if (!f.exists()) {
-			throw new RuntimeException("could not find subclass_whitelist.txt at " + f.getAbsolutePath());
-		}
-		BufferedReader whiteListIn = new BufferedReader(new FileReader(f));
-		String line = null;
-		HashMap<String, String> namespace2namespaceWhitelist = new HashMap<String, String>();
-		while ((line = whiteListIn.readLine()) != null) {
-			String[] elems = line.split(",");
-			namespace2namespaceWhitelist.put(elems[0], elems[1]);
-		}
-		whiteListIn.close();
+		HashMap<String, String> namespace2namespaceWhitelist = getWhitelist();
 
-		String file = args[0];
-		BufferedReader in = new BufferedReader(new FileReader(file));
-		line = null;
-		HashSet<String> problems = new HashSet<String>();
+		String hpEditOwlFile = args[0];
+		BufferedReader in = new BufferedReader(new FileReader(hpEditOwlFile));
+		String line = null;
+		HashSet<String> subclassProblems = new HashSet<String>();
 		while ((line = in.readLine()) != null) {
-			Matcher m = p.matcher(line);
-			if (m.find()) {
-				String purl1 = m.group(1);
-				String purl2 = m.group(2);
+
+			// test for tabs
+			if (line.contains("\\t")) {
+				System.out.println("found illegal tab in line: " + line);
+				System.exit(1);
+			}
+
+			// test for laysynomys at labels
+			Matcher matcherLayLabel = labelLayPattern.matcher(line);
+			if (matcherLayLabel.find()) {
+				System.out.println("found label of HP class to be asserted as lay: " + line);
+				System.exit(1);
+			}
+
+			// test the subclass axioms
+			Matcher matcherSubclassOf = subclassOfPattern.matcher(line);
+			if (matcherSubclassOf.find()) {
+				String purl1 = matcherSubclassOf.group(1);
+				String purl2 = matcherSubclassOf.group(2);
 
 				String n1 = getNameSpace(purl1);
 				String n2 = getNameSpace(purl2);
@@ -48,15 +59,15 @@ public class PerformHpoOwlQC {
 					continue; // always ok
 
 				if (!namespace2namespaceWhitelist.containsKey(n1))
-					problems.add(line);
+					subclassProblems.add(line);
 				else if (!(namespace2namespaceWhitelist.get(n1).equals(n2)))
-					problems.add(line);
+					subclassProblems.add(line);
 			}
 		}
 		in.close();
-		if (problems.size() > 0) {
+		if (subclassProblems.size() > 0) {
 			System.out.println("found problematic inter-ontology subclass axioms");
-			for (String problem : problems) {
+			for (String problem : subclassProblems) {
 				System.out.println(" - " + problem);
 			}
 			System.exit(1);
@@ -65,8 +76,24 @@ public class PerformHpoOwlQC {
 		System.out.println("everything ok");
 	}
 
+	private static HashMap<String, String> getWhitelist() throws FileNotFoundException, IOException {
+		File whilteListFile = new File("src/main/resources/subclass_whitelist.txt");
+		if (!whilteListFile.exists()) {
+			throw new RuntimeException("could not find subclass_whitelist.txt at " + whilteListFile.getAbsolutePath());
+		}
+		BufferedReader whiteListIn = new BufferedReader(new FileReader(whilteListFile));
+		String line = null;
+		HashMap<String, String> namespace2namespaceWhitelist = new HashMap<String, String>();
+		while ((line = whiteListIn.readLine()) != null) {
+			String[] elems = line.split(",");
+			namespace2namespaceWhitelist.put(elems[0], elems[1]);
+		}
+		whiteListIn.close();
+		return namespace2namespaceWhitelist;
+	}
+
 	private static String getNameSpace(String purl1) {
-		Matcher m = p2.matcher(purl1);
+		Matcher m = purlPattern.matcher(purl1);
 		if (m.find()) {
 			return m.group(1);
 		}
