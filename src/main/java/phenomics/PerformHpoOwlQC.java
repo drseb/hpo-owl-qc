@@ -1,10 +1,10 @@
 package phenomics;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.regex.Matcher;
@@ -25,7 +25,9 @@ public class PerformHpoOwlQC {
 
 		System.out.println("Test: PerformHpoOwlQC");
 
-		HashMap<String, String> namespace2namespaceWhitelist = getWhitelist();
+		PerformHpoOwlQC qc = new PerformHpoOwlQC();
+
+		HashMap<String, String> namespace2namespaceWhitelist = qc.getWhitelist();
 
 		String hpEditOwlFile = args[0];
 		BufferedReader in = new BufferedReader(new FileReader(hpEditOwlFile));
@@ -52,8 +54,8 @@ public class PerformHpoOwlQC {
 				String purl1 = matcherSubclassOf.group(1);
 				String purl2 = matcherSubclassOf.group(2);
 
-				String n1 = getNameSpace(purl1);
-				String n2 = getNameSpace(purl2);
+				String n1 = qc.getNameSpace(purl1);
+				String n2 = qc.getNameSpace(purl2);
 
 				if (n1.equals(n2))
 					continue; // always ok
@@ -76,12 +78,10 @@ public class PerformHpoOwlQC {
 		System.out.println("everything ok");
 	}
 
-	private static HashMap<String, String> getWhitelist() throws FileNotFoundException, IOException {
-		File whilteListFile = new File("src/main/resources/subclass_whitelist.txt");
-		if (!whilteListFile.exists()) {
-			throw new RuntimeException("could not find subclass_whitelist.txt at " + whilteListFile.getAbsolutePath());
-		}
-		BufferedReader whiteListIn = new BufferedReader(new FileReader(whilteListFile));
+	private HashMap<String, String> getWhitelist() throws FileNotFoundException, IOException {
+
+		BufferedReader whiteListIn = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/subclass_whitelist.txt")));
+
 		String line = null;
 		HashMap<String, String> namespace2namespaceWhitelist = new HashMap<String, String>();
 		while ((line = whiteListIn.readLine()) != null) {
@@ -92,7 +92,7 @@ public class PerformHpoOwlQC {
 		return namespace2namespaceWhitelist;
 	}
 
-	private static String getNameSpace(String purl1) {
+	private String getNameSpace(String purl1) {
 		Matcher m = purlPattern.matcher(purl1);
 		if (m.find()) {
 			return m.group(1);
