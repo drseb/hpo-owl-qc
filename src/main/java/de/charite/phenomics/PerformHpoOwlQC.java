@@ -1,4 +1,4 @@
-package phenomics;
+package de.charite.phenomics;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
