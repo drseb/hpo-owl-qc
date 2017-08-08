@@ -61,7 +61,7 @@
       </descriptorRefs>
       <archive>
        <manifest>
-        <mainClass>de.charite.phenomics.PerformHpoOwlQC</mainClass>
+        <mainClass>de.phenomics.PerformHpoOwlQC</mainClass>
        </manifest>
       </archive>
      </configuration>

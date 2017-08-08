@@ -1,4 +1,4 @@
-package de.charite.phenomics;
+package de.phenomics;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -10,6 +10,13 @@ import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Very simple text-based QC of hp-edit.owl. No real logical test, i.e. no
+ * owl-api involved so far
+ * 
+ * @author sebastiankohler
+ *
+ */
 public class PerformHpoOwlQC {
 
 	private static final Pattern subclassOfPattern = Pattern.compile("SubClassOf\\(<(.+)> <(.+)>\\)");
@@ -17,6 +24,9 @@ public class PerformHpoOwlQC {
 	private static final Pattern labelLayPattern = Pattern.compile("rdfs:label.*HP_.*layperson");
 
 	/**
+	 * Very simple text-based QC of hp-edit.owl. No real logical test, i.e. no
+	 * owl-api involved so far
+	 * 
 	 * @param hp
 	 *            hp-edit.owl
 	 * @throws IOException
@@ -29,10 +39,16 @@ public class PerformHpoOwlQC {
 
 		HashMap<String, String> namespace2namespaceWhitelist = qc.getWhitelist();
 
+		/*
+		 * TODO : use proper cmd-line parser...
+		 */
 		String hpEditOwlFile = args[0];
 		BufferedReader in = new BufferedReader(new FileReader(hpEditOwlFile));
 		String line = null;
 		HashSet<String> subclassProblems = new HashSet<String>();
+		HashSet<String> logicalDefLines = new HashSet<String>();
+		HashSet<String> logicalDefProblems = new HashSet<String>();
+
 		while ((line = in.readLine()) != null) {
 
 			// test for tabs
@@ -65,22 +81,50 @@ public class PerformHpoOwlQC {
 				else if (!(namespace2namespaceWhitelist.get(n1).equals(n2)))
 					subclassProblems.add(line);
 			}
+
+			// check if line is a logical def, i.e. EquivalentClasses-Axiom
+			if (line.startsWith("EquivalentClasses") && line.contains("ObjectSomeValuesFrom")) {
+				// have we seen this line before
+				if (logicalDefLines.contains(line)) {
+					// add to lines that are problematic
+					logicalDefProblems.add(line);
+				} else {
+					// store that we have seen this line
+					logicalDefLines.add(line);
+				}
+			}
 		}
 		in.close();
+
+		boolean foundProblem = false;
+		// did we see problems with subclass-axioms?
 		if (subclassProblems.size() > 0) {
 			System.out.println("found problematic inter-ontology subclass axioms");
 			for (String problem : subclassProblems) {
 				System.out.println(" - " + problem);
 			}
-			System.exit(1);
+			foundProblem = true;
 		}
 
-		System.out.println("everything ok");
+		// did we see duplicated logical defs?
+		if (logicalDefProblems.size() > 0) {
+			System.out.println("found duplicated lines of logical definitions");
+			for (String problem : logicalDefProblems) {
+				System.out.println(" - " + problem);
+			}
+			foundProblem = true;
+		}
+
+		if (foundProblem)
+			System.exit(1);
+		else
+			System.out.println("everything ok");
 	}
 
 	private HashMap<String, String> getWhitelist() throws FileNotFoundException, IOException {
 
-		BufferedReader whiteListIn = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/subclass_whitelist.txt")));
+		BufferedReader whiteListIn = new BufferedReader(
+				new InputStreamReader(getClass().getResourceAsStream("/subclass_whitelist.txt")));
 
 		String line = null;
 		HashMap<String, String> namespace2namespaceWhitelist = new HashMap<String, String>();
