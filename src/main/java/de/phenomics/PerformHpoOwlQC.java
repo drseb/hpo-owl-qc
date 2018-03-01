@@ -98,7 +98,7 @@ public class PerformHpoOwlQC {
 			// check if oboInOwl#hasSynonymType is followed by
 			// "<http://purl.obolibrary.org/obo/hp.owl#XYZ>"
 			if (line.startsWith("AnnotationAssertion") && line.contains("hasSynonymType")) {
-				if (!line.contains("hasSynonymType> <http://purl.obolibrary.org/obo/hp.owl#")) {
+				if (!line.contains("hasSynonymType> <http://purl.obolibrary.org/obo/")) {
 					synonymTypeProblems.add(line);
 				}
 			}
