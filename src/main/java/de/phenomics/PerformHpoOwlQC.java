@@ -48,6 +48,7 @@ public class PerformHpoOwlQC {
 		HashSet<String> subclassProblems = new HashSet<String>();
 		HashSet<String> logicalDefLines = new HashSet<String>();
 		HashSet<String> logicalDefProblems = new HashSet<String>();
+		HashSet<String> synonymTypeProblems = new HashSet<String>();
 
 		while ((line = in.readLine()) != null) {
 
@@ -88,9 +89,17 @@ public class PerformHpoOwlQC {
 				if (logicalDefLines.contains(line)) {
 					// add to lines that are problematic
 					logicalDefProblems.add(line);
-				} else {
+				}
+				else {
 					// store that we have seen this line
 					logicalDefLines.add(line);
+				}
+			}
+			// check if oboInOwl#hasSynonymType is followed by
+			// "<http://purl.obolibrary.org/obo/hp.owl#XYZ>"
+			if (line.startsWith("AnnotationAssertion") && line.contains("hasSynonymType")) {
+				if (!line.contains("hasSynonymType> <http://purl.obolibrary.org/obo/hp.owl#")) {
+					synonymTypeProblems.add(line);
 				}
 			}
 		}
@@ -110,6 +119,14 @@ public class PerformHpoOwlQC {
 		if (logicalDefProblems.size() > 0) {
 			System.out.println("found duplicated lines of logical definitions");
 			for (String problem : logicalDefProblems) {
+				System.out.println(" - " + problem);
+			}
+			foundProblem = true;
+		}
+
+		if (synonymTypeProblems.size() > 0) {
+			System.out.println("found problematic synonym type definitions");
+			for (String problem : synonymTypeProblems) {
 				System.out.println(" - " + problem);
 			}
 			foundProblem = true;
