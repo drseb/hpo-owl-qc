@@ -22,6 +22,7 @@ public class PerformHpoOwlQC {
 	private static final Pattern subclassOfPattern = Pattern.compile("SubClassOf\\(<(.+)> <(.+)>\\)");
 	private static final Pattern purlPattern = Pattern.compile("^http://purl.obolibrary.org/obo/(.+)_.+$");
 	private static final Pattern labelLayPattern = Pattern.compile("rdfs:label.*HP_.*layperson");
+	private static final Pattern emptyAnnotationPattern = Pattern.compile("^Annotation.+\"\"");
 
 	/**
 	 * Very simple text-based QC of hp-edit.owl. No real logical test, i.e. no
@@ -62,6 +63,13 @@ public class PerformHpoOwlQC {
 			Matcher matcherLayLabel = labelLayPattern.matcher(line);
 			if (matcherLayLabel.find()) {
 				System.out.println("found label of HP class to be asserted as lay: " + line);
+				System.exit(1);
+			}
+
+			// test for empty annotations at labels
+			Matcher matcherEmpty = emptyAnnotationPattern.matcher(line);
+			if (matcherEmpty.find()) {
+				System.out.println("found empty annotation in line: " + line);
 				System.exit(1);
 			}
 
