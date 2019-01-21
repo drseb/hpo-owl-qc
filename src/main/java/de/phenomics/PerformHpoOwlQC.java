@@ -73,6 +73,12 @@ public class PerformHpoOwlQC {
 				System.exit(1);
 			}
 
+			// test for usage of BFO quality
+			if (line.contains("BFO_0000019")) {
+				System.out.println("found illegal usage of BFO quality in line: " + line);
+				System.exit(1);
+			}
+
 			// test the subclass axioms
 			Matcher matcherSubclassOf = subclassOfPattern.matcher(line);
 			if (matcherSubclassOf.find()) {
