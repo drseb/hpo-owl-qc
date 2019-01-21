@@ -79,6 +79,12 @@ public class PerformHpoOwlQC {
 				System.exit(1);
 			}
 
+			// no dc:creator in annotations
+			if (line.contains("AnnotationAssertion") && line.contains("dc:creator")) {
+				System.out.println("found illegal usage of dc:creator in annotation assertions in line: " + line);
+				System.exit(1);
+			}
+
 			// test the subclass axioms
 			Matcher matcherSubclassOf = subclassOfPattern.matcher(line);
 			if (matcherSubclassOf.find()) {
