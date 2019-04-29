@@ -23,6 +23,7 @@ public class PerformHpoOwlQC {
 	private static final Pattern purlPattern = Pattern.compile("^http://purl.obolibrary.org/obo/(.+)_.+$");
 	private static final Pattern labelLayPattern = Pattern.compile("rdfs:label.*HP_.*layperson");
 	private static final Pattern emptyAnnotationPattern = Pattern.compile("^Annotation.+\"\"");
+	private static final Pattern hpoIdPattern = Pattern.compile("HP_\\d{7}");
 
 	/**
 	 * Very simple text-based QC of hp-edit.owl. No real logical test, i.e. no
@@ -50,6 +51,7 @@ public class PerformHpoOwlQC {
 		HashSet<String> logicalDefLines = new HashSet<String>();
 		HashSet<String> logicalDefProblems = new HashSet<String>();
 		HashSet<String> synonymTypeProblems = new HashSet<String>();
+		HashMap<String, String> hpoid2defLine = new HashMap<>();
 
 		while ((line = in.readLine()) != null) {
 
@@ -83,6 +85,21 @@ public class PerformHpoOwlQC {
 			if (line.contains("AnnotationAssertion") && line.contains("dc:creator")) {
 				System.out.println("found illegal usage of dc:creator in annotation assertions in line: " + line);
 				System.exit(1);
+			}
+
+			// duplicated definitions
+			if (line.contains("AnnotationAssertion") && line.contains("IAO_0000115")) {
+				Matcher hpoIdMatcher = hpoIdPattern.matcher(line);
+				if (hpoIdMatcher.find()) {
+					String hpoId = hpoIdMatcher.group();
+					if (hpoid2defLine.containsKey(hpoId)) {
+						System.out.println("found duplicated defintion for HPO-id: " + hpoId);
+						System.exit(1);
+					}
+					else {
+						hpoid2defLine.put(hpoId, line);
+					}
+				}
 			}
 
 			// test the subclass axioms
