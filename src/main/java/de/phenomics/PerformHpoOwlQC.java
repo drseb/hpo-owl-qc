@@ -52,6 +52,7 @@ public class PerformHpoOwlQC {
 		HashSet<String> logicalDefProblems = new HashSet<String>();
 		HashSet<String> synonymTypeProblems = new HashSet<String>();
 		HashMap<String, String> hpoid2defLine = new HashMap<>();
+		HashMap<String, String> hpoid2commentLine = new HashMap<>();
 
 		while ((line = in.readLine()) != null) {
 
@@ -93,11 +94,26 @@ public class PerformHpoOwlQC {
 				if (hpoIdMatcher.find()) {
 					String hpoId = hpoIdMatcher.group();
 					if (hpoid2defLine.containsKey(hpoId)) {
-						System.out.println("found duplicated defintion for HPO-id: " + hpoId);
+						System.out.println("found two defintions for one class! Please fix! See HPO-id: " + hpoId);
 						System.exit(1);
 					}
 					else {
 						hpoid2defLine.put(hpoId, line);
+					}
+				}
+			}
+
+			// duplicated comments
+			if (line.contains("AnnotationAssertion") && line.contains("rdfs:comment")) {
+				Matcher hpoIdMatcher = hpoIdPattern.matcher(line);
+				if (hpoIdMatcher.find()) {
+					String hpoId = hpoIdMatcher.group();
+					if (hpoid2commentLine.containsKey(hpoId)) {
+						System.out.println("found two comments for one class! Please fix! See HPO-id: " + hpoId);
+						System.exit(1);
+					}
+					else {
+						hpoid2commentLine.put(hpoId, line);
 					}
 				}
 			}
