@@ -65,7 +65,7 @@ public class PerformHpoOwlQC {
 			// test for laysynomys at labels
 			Matcher matcherLayLabel = labelLayPattern.matcher(line);
 			if (matcherLayLabel.find()) {
-				System.out.println("found label of HP class to be asserted as lay: " + line);
+				System.out.println("found primary label of HP class to be asserted as lay: " + line);
 				System.exit(1);
 			}
 
@@ -78,7 +78,7 @@ public class PerformHpoOwlQC {
 
 			// test for usage of BFO quality
 			if (line.contains("BFO_0000019")) {
-				System.out.println("found illegal usage of BFO quality in line: " + line);
+				System.out.println("found illegal usage of 'BFO quality' in line: " + line);
 				System.exit(1);
 			}
 
