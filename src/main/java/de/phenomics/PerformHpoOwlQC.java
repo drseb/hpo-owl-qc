@@ -189,9 +189,37 @@ public class PerformHpoOwlQC {
 
 				if (annotationPropertiesWhitelist.contains(uri))
 					continue;
-				else if (uri.startsWith("http://purl.obolibrary.org/obo"))
+				else if (uri.startsWith("http://purl.obolibrary.org/obo/HP_"))
+					continue;
+				else if (uri.startsWith("http://purl.obolibrary.org/obo/PATO_"))
+					continue;
+				else if (uri.startsWith("http://purl.obolibrary.org/obo/CHEBI_"))
+					continue;
+				else if (uri.startsWith("http://purl.obolibrary.org/obo/UBERON_"))
+					continue;
+				else if (uri.startsWith("http://purl.obolibrary.org/obo/PR_"))
+					continue;
+				else if (uri.startsWith("http://purl.obolibrary.org/obo/GO_"))
+					continue;
+				else if (uri.startsWith("http://purl.obolibrary.org/obo/CL_"))
+					continue;
+				else if (uri.startsWith("http://purl.obolibrary.org/obo/NBO_"))
+					continue;
+				else if (uri.startsWith("http://purl.obolibrary.org/obo/RO_"))
+					continue;
+				else if (uri.startsWith("http://purl.obolibrary.org/obo/MPATH_"))
+					continue;
+				else if (uri.startsWith("http://purl.obolibrary.org/obo/BSPO_"))
+					continue;
+				else if (uri.startsWith("http://purl.obolibrary.org/obo/hp/imports"))
+					continue;
+				else if (uri.startsWith("http://purl.obolibrary.org/obo/HsapDv_"))
 					continue;
 				else if (uri.startsWith("http://orcid.org/"))
+					continue;
+				else if (uri.startsWith("http://purl.obolibrary.org/obo/BFO_"))
+					continue;
+				else if (uri.startsWith("http://purl.obolibrary.org/obo/IAO_"))
 					continue;
 				else {
 					uriProblems.add(uri);

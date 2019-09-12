@@ -1,3 +1,5 @@
+http://purl.obolibrary.org/obo/IAO_0000115
+http://purl.obolibrary.org/obo/IAO_0100001
 http://www.geneontology.org/formats/oboInOwl#consider
 http://www.geneontology.org/formats/oboInOwl#created_by
 http://www.geneontology.org/formats/oboInOwl#creation_date
@@ -18,9 +20,13 @@ dc:description
 owl:deprecated
 rdfs:comment
 rdfs:label
+http://purl.obolibrary.org/obo/hp#hposlim_core
+http://purl.obolibrary.org/obo/hp.owl#layperson
 http://www.geneontology.org/formats/oboInOwl#SynonymTypeProperty
 http://www.geneontology.org/formats/oboInOwl#logical-definition-view-relation
 http://www.geneontology.org/formats/oboInOwl#hasOBOFormatVersion
 http://www.geneontology.org/formats/oboInOwl#SubsetProperty
 http://www.geneontology.org/formats/oboInOwl#saved-by
 http://www.geneontology.org/formats/oboInOwl#default-namespace
+http://purl.obolibrary.org/obo/hp#secondary_consequence
+http://purl.obolibrary.org/obo/hp/patterns/definitions.owl
