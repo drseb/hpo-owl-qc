@@ -219,8 +219,6 @@ public class PerformHpoOwlQC {
 					continue;
 				else if (uri.startsWith("http://purl.obolibrary.org/obo/BFO_"))
 					continue;
-				else if (uri.startsWith("http://purl.obolibrary.org/obo/IAO_"))
-					continue;
 				else {
 					uriProblems.add(uri);
 				}
