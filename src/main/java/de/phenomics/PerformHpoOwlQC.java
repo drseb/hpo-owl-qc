@@ -10,6 +10,9 @@ import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset.Entry;
+
 /**
  * Very simple text-based QC of hp-edit.owl. No real logical test, i.e. no
  * owl-api involved so far
@@ -24,6 +27,8 @@ public class PerformHpoOwlQC {
 	private static final Pattern labelLayPattern = Pattern.compile("rdfs:label.*HP_.*layperson");
 	private static final Pattern emptyAnnotationPattern = Pattern.compile("^Annotation.+\"\"");
 	private static final Pattern hpoIdPattern = Pattern.compile("HP_\\d{7}");
+
+	private static final Pattern uris = Pattern.compile("<(.+?)>");
 
 	/**
 	 * Very simple text-based QC of hp-edit.owl. No real logical test, i.e. no
@@ -40,6 +45,7 @@ public class PerformHpoOwlQC {
 		PerformHpoOwlQC qc = new PerformHpoOwlQC();
 
 		HashMap<String, String> namespace2namespaceWhitelist = qc.getWhitelist();
+		HashSet<String> annotationPropertiesWhitelist = qc.getAnnotationPropertiesWhitelist();
 
 		/*
 		 * TODO : use proper cmd-line parser...
@@ -51,6 +57,7 @@ public class PerformHpoOwlQC {
 		HashSet<String> logicalDefLines = new HashSet<String>();
 		HashSet<String> logicalDefProblems = new HashSet<String>();
 		HashSet<String> synonymTypeProblems = new HashSet<String>();
+		HashMultiset<String> uriProblems = HashMultiset.create();
 		HashMap<String, String> hpoid2defLine = new HashMap<>();
 		HashMap<String, String> hpoid2commentLine = new HashMap<>();
 
@@ -164,6 +171,33 @@ public class PerformHpoOwlQC {
 					synonymTypeProblems.add(line);
 				}
 			}
+
+			Matcher annotMatcher1 = uris.matcher(line);
+			while (annotMatcher1.find()) {
+
+				if (line.startsWith("Prefix"))
+					continue;
+				if (line.startsWith("Ontology("))
+					continue;
+
+				String uri = annotMatcher1.group(1);
+
+				// hacky exception... needs to be re-visited, i.e. handle string values
+				// differently ... TODO
+				if (uri.startsWith("60 mmHg"))
+					continue;
+
+				if (annotationPropertiesWhitelist.contains(uri))
+					continue;
+				else if (uri.startsWith("http://purl.obolibrary.org/obo"))
+					continue;
+				else if (uri.startsWith("http://orcid.org/"))
+					continue;
+				else {
+					uriProblems.add(uri);
+				}
+			}
+
 		}
 		in.close();
 
@@ -193,6 +227,13 @@ public class PerformHpoOwlQC {
 			}
 			foundProblem = true;
 		}
+		if (uriProblems.size() > 0) {
+			System.out.println("found problematic URIs! Did you use the correct relationship?");
+			for (Entry<String> problem : uriProblems.entrySet()) {
+				System.out.println(" - " + problem.getElement() + " -> " + problem.getCount());
+			}
+			foundProblem = true;
+		}
 
 		if (foundProblem)
 			System.exit(1);
@@ -213,6 +254,20 @@ public class PerformHpoOwlQC {
 		}
 		whiteListIn.close();
 		return namespace2namespaceWhitelist;
+	}
+
+	private HashSet<String> getAnnotationPropertiesWhitelist() throws FileNotFoundException, IOException {
+
+		BufferedReader whiteListIn = new BufferedReader(
+				new InputStreamReader(getClass().getResourceAsStream("/AP_whitelist.txt")));
+
+		String line = null;
+		HashSet<String> apWhitelist = new HashSet<>();
+		while ((line = whiteListIn.readLine()) != null) {
+			apWhitelist.add(line.trim());
+		}
+		whiteListIn.close();
+		return apWhitelist;
 	}
 
 	private String getNameSpace(String purl1) {
