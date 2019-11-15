@@ -104,6 +104,11 @@ public class PerformHpoOwlQC {
 				System.exit(1);
 			}
 
+			if (line.startsWith("AnnotationAssertion(owl:deprecated ") && !line.contains("true")) {
+				System.out.println("wrong usage of owl:deprecated: " + line);
+				System.exit(1);
+			}
+
 			// duplicated definitions
 			if (line.contains("AnnotationAssertion") && line.contains("IAO_0000115")) {
 				Matcher hpoIdMatcher = hpoIdPattern.matcher(line);
