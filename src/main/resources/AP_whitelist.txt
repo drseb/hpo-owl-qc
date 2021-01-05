@@ -32,6 +32,7 @@ http://purl.obolibrary.org/obo/hp/patterns/definitions.owl
 https://hpo.jax.org/app/license
 http://purl.obolibrary.org/obo/hp#uk_spelling
 http://purl.obolibrary.org/obo/hp#hposlim_core
+http://purl.obolibrary.org/obo/hp#is_observable_through
 http://purl.obolibrary.org/obo/hp#secondary_consequence
 http://purl.obolibrary.org/obo/hp/patterns/definitions.owl
 dc:contributor
