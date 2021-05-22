@@ -208,6 +208,8 @@ public class PerformHpoOwlQC {
 					continue;
 				else if (uri.startsWith("http://purl.obolibrary.org/obo/CL_"))
 					continue;
+				else if (uri.startsWith("http://purl.obolibrary.org/obo/MAXO_"))
+					continue;
 				else if (uri.startsWith("http://purl.obolibrary.org/obo/NBO_"))
 					continue;
 				else if (uri.startsWith("http://purl.obolibrary.org/obo/RO_"))
