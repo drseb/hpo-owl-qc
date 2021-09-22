@@ -8,13 +8,6 @@
 	<artifactId>hpo-owl-qc</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
-	<repositories>
-		<repository>
-			<id>compbio</id>
-			<url>http://compbio.charite.de/tl_files/maven</url>
-		</repository>
-	</repositories>
-
 	<dependencies>
 
 		<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
