@@ -222,7 +222,7 @@ public class PerformHpoOwlQC {
 					continue;
 				else if (uri.startsWith("http://purl.obolibrary.org/obo/HsapDv_"))
 					continue;
-				else if (uri.startsWith("http://orcid.org/"))
+				else if (uri.startsWith("https://orcid.org/"))
 					continue;
 				else if (uri.startsWith("http://purl.obolibrary.org/obo/BFO_"))
 					continue;
