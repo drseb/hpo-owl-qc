@@ -89,20 +89,12 @@ public class PerformHpoOwlQC {
 				System.exit(1);
 			}
 
-			if (line.contains("#created_by")) {
-				if (!line.contains("http://www.geneontology.org/formats/oboInOwl#created_by")) {
+			if (line.contains("http://www.geneontology.org/formats/oboInOwl#created_by")) {
 					System.out.println(
-							"you must use the proper 'created_by' annotation property. found wrong usage in line: "
+							"you must use the proper 'dc:creator' annotation property. found wrong usage in line: "
 									+ line);
 					System.exit(1);
 				}
-			}
-
-			// no dc:creator in annotations
-			if (line.contains("AnnotationAssertion") && line.contains("dc:creator")) {
-				System.out.println("found illegal usage of dc:creator in annotation assertions in line: " + line);
-				System.exit(1);
-			}
 
 			if (line.startsWith("AnnotationAssertion(owl:deprecated ") && !line.contains("true")) {
 				System.out.println("wrong usage of owl:deprecated: " + line);
