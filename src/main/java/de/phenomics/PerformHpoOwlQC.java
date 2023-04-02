@@ -224,6 +224,8 @@ public class PerformHpoOwlQC {
 					continue;
 				else if (uri.startsWith("https://orcid.org/"))
 					continue;
+				else if (uri.startsWith("http://www.wikidata.org/entity/"))
+					continue;
 				else if (uri.startsWith("http://purl.obolibrary.org/obo/BFO_"))
 					continue;
 				else {
