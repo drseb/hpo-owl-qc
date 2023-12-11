@@ -200,6 +200,10 @@ public class PerformHpoOwlQC {
 					continue;
 				else if (uri.startsWith("http://purl.obolibrary.org/obo/CL_"))
 					continue;
+				else if (uri.startsWith("http://purl.obolibrary.org/obo/IAO_0000233"))
+					continue;
+				else if (uri.startsWith("https://github.com/obophenotype/human-phenotype-ontology/issues/"))
+					continue;
 				else if (uri.startsWith("http://purl.obolibrary.org/obo/MAXO_"))
 					continue;
 				else if (uri.startsWith("http://purl.obolibrary.org/obo/NBO_"))
