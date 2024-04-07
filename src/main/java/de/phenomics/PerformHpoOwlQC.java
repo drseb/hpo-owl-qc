@@ -216,6 +216,8 @@ public class PerformHpoOwlQC {
 					continue;
 				else if (uri.startsWith("http://purl.obolibrary.org/obo/hp/imports"))
 					continue;
+				else if (uri.startsWith("http://purl.obolibrary.org/obo/hp/components"))
+					continue;
 				else if (uri.startsWith("http://purl.obolibrary.org/obo/HsapDv_"))
 					continue;
 				else if (uri.startsWith("https://orcid.org/"))
