@@ -22,6 +22,7 @@ http://www.geneontology.org/formats/oboInOwl#SubsetProperty
 http://www.geneontology.org/formats/oboInOwl#saved-by
 http://www.geneontology.org/formats/oboInOwl#default-namespace
 http://purl.obolibrary.org/obo/hp#abbreviation
+http://purl.obolibrary.org/obo/hp#allelic_requirement
 http://purl.obolibrary.org/obo/hp#display_label
 http://purl.obolibrary.org/obo/hp#hposlim_core
 http://purl.obolibrary.org/obo/hp#layperson
